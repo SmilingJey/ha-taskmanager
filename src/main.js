@@ -1,51 +1,165 @@
 'use strict';
 
 (function () {
+  const filterTemlate = document.querySelector(`#filter-template`);
 
-  class Filter {
-    constructor(id, name, tasksCount = 0, isActive = false) {
-      this.id = id;
-      this.name = name;
-      this.tasksCount = tasksCount;
-      this.isActive = isActive;
-    }
+  /**
+   * Возвращает элемент фильтра, созданный из шаблона #filter-template
+   * @param {Object} filterDefinition - описание фильтра
+   * @return {Node} - возвращает элемент фильтра
+   */
+  function createFilterElement(filterDefinition) {
+    const filterElement = filterTemlate.content.cloneNode(true);
 
-    render() {
-      const filterElement = Filter.tempate.content.cloneNode(true);
+    const filterInputElement = filterElement.querySelector(`input`);
+    filterInputElement.setAttribute(`id`, `filter__${filterDefinition.id}`);
+    filterInputElement.checked = filterDefinition.isActive;
+    filterInputElement.disabled = filterDefinition.tasksCount === 0;
 
-      const filterInputElement = filterElement.querySelector(`input`);
-      filterInputElement.setAttribute(`id`, `filter__${this.id}`);
-      filterInputElement.checked = this.isActive;
-      filterInputElement.disabled = this.tasksCount === 0;
+    const filterLabelElement = filterElement.querySelector(`label`);
+    filterLabelElement.innerHTML = `${filterDefinition.name} <span class="filter__${filterDefinition.id}-count">${filterDefinition.tasksCount}</span>`;
+    filterLabelElement.setAttribute(`for`, `filter__${filterDefinition.id}`);
+    filterLabelElement.addEventListener(`click`, filterDefinition.onClick);
 
-      const filterLabelElement = filterElement.querySelector(`label`);
-      filterLabelElement.innerHTML = `${this.name} <span class="filter__${this.id}-count">${this.tasksCount}</span>`;
-      filterLabelElement.setAttribute(`for`, `filter__${this.id}`);
-
-      return filterElement;
-    }
+    return filterElement;
   }
 
-  Filter.tempate = document.querySelector(`#filter-template`);
+  /**
+   * Функция возвращает целое случайное число в диапазоне [0, max)
+   * @param {*} max - максимальное число ()
+   * @return {Node}
+   */
+  function randomInteger(max) {
+    return Math.floor(Math.random() * max);
+  }
 
+  /**
+   * Функция отображает список фильтров
+   */
   function renderFilters() {
-    const filters = [
-      new Filter(`all`, `ALL`, Math.floor(Math.random() * 10), true),
-      new Filter(`overdue`, `OVERDUE`, Math.floor(Math.random() * 10)),
-      new Filter(`today`, `TODAY`, Math.floor(Math.random() * 10)),
-      new Filter(`favorites`, `FAVORITES`, Math.floor(Math.random() * 10)),
-      new Filter(`repeating`, `REPEATING`, Math.floor(Math.random() * 10)),
-      new Filter(`tags`, `TAGS`, Math.floor(Math.random() * 10)),
-      new Filter(`archive`, `ARCHIVE`, Math.floor(Math.random() * 10))
+    const filterDefinitions = [
+      {
+        id: `all`,
+        name: `ALL`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: true
+      },
+
+      {
+        id: `overdue`,
+        name: `OVERDUE`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      },
+
+      {
+        id: `today`,
+        name: `TODAY`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      },
+
+      {
+        id: `favorites`,
+        name: `FAVORITES`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      },
+
+      {
+        id: `repeating`,
+        name: `REPEATING`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      },
+
+      {
+        id: `tags`,
+        name: `TAGS`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      },
+
+      {
+        id: `archive`,
+        name: `ARCHIVE`,
+        tasksCount: randomInteger(10),
+        onClick: showTasks,
+        isActive: false
+      }
     ];
 
-    const filtersContainerElement = document.querySelector(`.main__filter`);
     const filtersFragment = document.createDocumentFragment();
-    for (const filter of filters) {
-      filtersFragment.appendChild(filter.render());
+    const filterElements = filterDefinitions.map(createFilterElement);
+
+    for (const filterElement of filterElements) {
+      filtersFragment.appendChild(filterElement);
     }
+
+    const filtersContainerElement = document.querySelector(`.main__filter`);
     filtersContainerElement.appendChild(filtersFragment);
   }
 
   renderFilters();
+
+  const taskTemplate = document.querySelector(`#card-template`);
+
+  /**
+   * Возвращает карточку задачи, созданную из шаблона #card-template
+   * @param {Object} taskDefinition - описание задачи
+   * @return {Node} - возвращает элемент карточки задачи
+   */
+  function createTaskElement(taskDefinition) {
+    const taskElement = taskTemplate.content.querySelector(`.card`).cloneNode(true);
+    taskElement.classList.add(`card--${taskDefinition.color}`);
+    return taskElement;
+  }
+
+  /**
+   * Функция удаляет все дочерние элементы
+   * @param {*} element - DOM элемент, из которого будут удалены дочерние
+   */
+  function removeChilds(element) {
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  /**
+   * Функция возвращает случайный элемент массива
+   * @param {Array} array - массив
+   * @return {*} - возвращает случайный элемент массива
+   */
+  function randomArrayItem(array) {
+    return array[randomInteger(array.length)];
+  }
+
+  const tasksContainerElement = document.querySelector(`.board__tasks`);
+
+  /**
+   * Функция отображает случайное количество карточек задач
+   */
+  function showTasks() {
+    removeChilds(tasksContainerElement);
+    const tasksCount = randomInteger(10);
+    const TASK_COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
+    const tasksDefinitions = Array(tasksCount).fill().map(() => (
+      {color: randomArrayItem(TASK_COLORS)})
+    );
+
+    const tasksFragment = document.createDocumentFragment();
+    for (const taskDefinition of tasksDefinitions) {
+      tasksFragment.appendChild(createTaskElement(taskDefinition));
+    }
+
+    tasksContainerElement.appendChild(tasksFragment);
+  }
+
+  showTasks();
 })();
