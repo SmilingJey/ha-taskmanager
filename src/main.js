@@ -1,5 +1,3 @@
-'use strict';
-
 (function () {
   const filterTemlate = document.querySelector(`#filter-template`);
 
