@@ -1,6 +1,7 @@
-import {randomInteger, randomArrayItem, removeChilds} from './utils.js';
+import {randomInteger, removeChilds} from './utils.js';
 import createFilterElement from './filter.js';
 import createTaskElement from './task.js';
+import createMockTask from './moc-task.js';
 
 /**
  * Функция отображает список фильтров
@@ -84,11 +85,8 @@ const tasksContainerElement = document.querySelector(`.board__tasks`);
  */
 function showTasks() {
   removeChilds(tasksContainerElement);
-  const tasksCount = randomInteger(10);
-  const TASK_COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
-  const tasksDefinitions = Array(tasksCount).fill().map(() => (
-    {color: randomArrayItem(TASK_COLORS)})
-  );
+  const tasksCount = randomInteger(10) + 3;
+  const tasksDefinitions = Array(tasksCount).fill().map(createMockTask);
 
   const tasksFragment = document.createDocumentFragment();
   for (const taskDefinition of tasksDefinitions) {
