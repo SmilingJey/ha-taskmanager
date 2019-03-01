@@ -231,53 +231,51 @@
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-mo-2"
+                        id="repeat-mo"
                         name="repeat"
                         value="mo"
                       />
-                      <label class="card__repeat-day" for="repeat-mo-2"
+                      <label class="card__repeat-day" for="repeat-mo"
                       >mo</label
                       >
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-tu-2"
+                        id="repeat-tu"
                         name="repeat"
                         value="tu"
-                        checked
                       />
-                      <label class="card__repeat-day" for="repeat-tu-2"
+                      <label class="card__repeat-day" for="repeat-tu"
                       >tu</label
                       >
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-we-2"
+                        id="repeat-we"
                         name="repeat"
                         value="we"
                       />
-                      <label class="card__repeat-day" for="repeat-we-2"
+                      <label class="card__repeat-day" for="repeat-we"
                       >we</label
                       >
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-th-2"
+                        id="repeat-th"
                         name="repeat"
                         value="th"
                       />
-                      <label class="card__repeat-day" for="repeat-th-2"
+                      <label class="card__repeat-day" for="repeat-th"
                       >th</label
                       >
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-fr-2"
+                        id="repeat-fr"
                         name="repeat"
                         value="fr"
-                        checked
                       />
-                      <label class="card__repeat-day" for="repeat-fr-2"
+                      <label class="card__repeat-day" for="repeat-fr"
                       >fr</label
                       >
                       <input
@@ -285,20 +283,19 @@
                         type="checkbox"
                         name="repeat"
                         value="sa"
-                        id="repeat-sa-2"
+                        id="repeat-sa"
                       />
-                      <label class="card__repeat-day" for="repeat-sa-2"
+                      <label class="card__repeat-day" for="repeat-sa"
                       >sa</label
                       >
                       <input
                         class="visually-hidden card__repeat-day-input"
                         type="checkbox"
-                        id="repeat-su-2"
+                        id="repeat-su"
                         name="repeat"
                         value="su"
-                        checked
                       />
-                      <label class="card__repeat-day" for="repeat-su-2"
+                      <label class="card__repeat-day" for="repeat-su"
                       >su</label
                       >
                     </div>
@@ -382,62 +379,62 @@
                 <div class="card__colors-wrap">
                   <input
                     type="radio"
-                    id="color-black-2"
+                    id="color-black"
                     class="card__color-input card__color-input--black visually-hidden"
                     name="color"
                     value="black"
                   />
                   <label
-                    for="color-black-2"
+                    for="color-black"
                     class="card__color card__color--black"
                   >black</label
                   >
                   <input
                     type="radio"
-                    id="color-yellow-2"
+                    id="color-yellow"
                     class="card__color-input card__color-input--yellow visually-hidden"
                     name="color"
                     value="yellow"
                   />
                   <label
-                    for="color-yellow-2"
+                    for="color-yellow"
                     class="card__color card__color--yellow"
                   >yellow</label
                   >
                   <input
                     type="radio"
-                    id="color-blue-2"
+                    id="color-blue"
                     class="card__color-input card__color-input--blue visually-hidden"
                     name="color"
                     value="blue"
                   />
                   <label
-                    for="color-blue-2"
+                    for="color-blue"
                     class="card__color card__color--blue"
                   >blue</label
                   >
                   <input
                     type="radio"
-                    id="color-green-2"
+                    id="color-green"
                     class="card__color-input card__color-input--green visually-hidden"
                     name="color"
                     value="green"
                   />
                   <label
-                    for="color-green-2"
+                    for="color-green"
                     class="card__color card__color--green"
                   >green</label
                   >
                   <input
                     type="radio"
-                    id="color-pink-2"
+                    id="color-pink"
                     class="card__color-input card__color-input--pink visually-hidden"
                     name="color"
                     value="pink"
                     checked
                   />
                   <label
-                    for="color-pink-2"
+                    for="color-pink"
                     class="card__color card__color--pink"
                   >pink</label
                   >
@@ -453,6 +450,24 @@
         </form>
       </article>
     </template>
+
+    <template id="task-hashtag-template">
+      <span class="card__hashtag-inner">
+        <input
+          type="hidden"
+          name="hashtag"
+          value="repeat"
+          class="card__hashtag-hidden-input"
+        />
+        <button type="button" class="card__hashtag-name">
+
+        </button>
+        <button type="button" class="card__hashtag-delete">
+          delete
+        </button>
+      </span>
+    </template>
+
     <script src="bundle.js"></script>
   </body>
 </html>
