@@ -1,15 +1,17 @@
-import {removeChilds} from './utils.js';
+import {removeChilds, setUniqueId} from './utils.js';
 import * as moment from 'moment';
+import Component from './component.js';
 
 /**
  * Класс представляет карточку задачи
  */
-export default class Task {
+export default class Task extends Component {
   /**
    * Создание карточки азадчи
    * @param {Object} data - описание задачи
    */
   constructor(data) {
+    super();
     this._number = Task.counter++;
     this._title = data.title;
     this._hasDeadline = data.hasDeadline;
@@ -21,8 +23,8 @@ export default class Task {
     this._repeatingDays = data.repeatingDays;
     this._isFavorite = data.isFavorite;
     this._isDone = data.isDone;
-    this._element = null;
 
+    this._element = null;
     this._onEditButtonClick = this._onEditButtonClick.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._isEdit = false;
@@ -43,7 +45,7 @@ export default class Task {
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
     this._isEdit = false;
-    this._updateIsEdit();
+    this.update();
   }
 
   /**
@@ -65,23 +67,13 @@ export default class Task {
   }
 
   /**
-   * Создание DOM элемента карточки задачи
-   * @return {Node} элемент карточки задачи
+   * Создает элемент карточки задачи из шаблона
+   * @return {Node}
    */
-  render() {
-    this._element = Task.temlate.cloneNode(true);
-    this._updateId();
-    this.update();
-    this.bind();
-    return this._element;
-  }
-
-  /**
-   * Удаление DOM элемента карточки задачи
-   */
-  unrender() {
-    this.unbind();
-    this._element = null;
+  get template() {
+    const templateElement = Task.temlate.cloneNode(true);
+    setUniqueId(templateElement, this._number);
+    return templateElement;
   }
 
   /**
@@ -211,21 +203,7 @@ export default class Task {
     labelElement.htmlFor = newId;
   }
 
-  /**
-   * Задает уникальные атрибуты id и for для элементов
-   * input и label карточки задачи
-   */
-  _updateId() {
-    const idForChange = [
-      `repeat-mo`, `repeat-tu`, `repeat-we`, `repeat-th`, `repeat-fr`,
-      `repeat-sa`, `repeat-su`, `color-black`, `color-yellow`,
-      `color-blue`, `color-green`, `color-pink`
-    ];
 
-    for (const id of idForChange) {
-      this._setInputId(id, `${id}-${this._number}`);
-    }
-  }
 }
 
 Task.counter = 0;

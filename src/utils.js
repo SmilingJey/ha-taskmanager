@@ -55,5 +55,21 @@ function removeChilds(element, childSelector) {
   }
 }
 
+/**
+ * Задает уникальные атрибуты id и for всем элементам контейнера
+ * @param {*} containerElement - контайнер элементов
+ * @param {*} number - номер
+ */
+function setUniqueId(containerElement, number) {
+  const elements = containerElement.querySelectorAll(`[id]:not([id=""]`);
+  for (const element of elements) {
+    const labelForElement = containerElement.querySelector(`label[for=${element.id}]`);
+    if (labelForElement) {
+      labelForElement.htmlFor = `${element.id}-${number}`;
+    }
+    element.id = `${element.id}-${number}`;
+  }
+}
+
 export {randomInteger, randomBoolean, randomArrayFromArray,
-  removeChilds, randomArrayItem};
+  removeChilds, setUniqueId, randomArrayItem};
