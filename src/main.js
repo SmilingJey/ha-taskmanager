@@ -1,6 +1,6 @@
 import {randomInteger, removeChilds} from './utils.js';
 import createFilterElement from './filter.js';
-import createTaskElement from './task.js';
+import Task from './task.js';
 import createMockTask from './moc-task.js';
 
 /**
@@ -86,11 +86,12 @@ const tasksContainerElement = document.querySelector(`.board__tasks`);
 function showTasks() {
   removeChilds(tasksContainerElement);
   const tasksCount = randomInteger(10) + 3;
-  const tasksDefinitions = Array(tasksCount).fill().map(createMockTask);
+  const tasks = Array(tasksCount).fill().map(() => new Task(createMockTask()));
 
   const tasksFragment = document.createDocumentFragment();
-  for (const taskDefinition of tasksDefinitions) {
-    tasksFragment.appendChild(createTaskElement(taskDefinition));
+
+  for (const task of tasks) {
+    tasksFragment.appendChild(task.render());
   }
 
   tasksContainerElement.appendChild(tasksFragment);
