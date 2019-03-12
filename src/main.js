@@ -1,7 +1,7 @@
-import {randomInteger, removeChilds} from './utils.js';
+import {randomInteger} from './utils.js';
 import createFilterElement from './filter.js';
-import Task from './task.js';
-import createMockTask from './moc-task.js';
+import TasksBoard from './tasks-board.js';
+
 
 /**
  * Функция отображает список фильтров
@@ -12,7 +12,7 @@ function renderFilters() {
       id: `all`,
       name: `ALL`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: true
     },
 
@@ -20,7 +20,7 @@ function renderFilters() {
       id: `overdue`,
       name: `OVERDUE`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     },
 
@@ -28,7 +28,7 @@ function renderFilters() {
       id: `today`,
       name: `TODAY`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     },
 
@@ -36,7 +36,7 @@ function renderFilters() {
       id: `favorites`,
       name: `FAVORITES`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     },
 
@@ -44,7 +44,7 @@ function renderFilters() {
       id: `repeating`,
       name: `REPEATING`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     },
 
@@ -52,7 +52,7 @@ function renderFilters() {
       id: `tags`,
       name: `TAGS`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     },
 
@@ -60,7 +60,7 @@ function renderFilters() {
       id: `archive`,
       name: `ARCHIVE`,
       tasksCount: randomInteger(10),
-      onClick: showTasks,
+      onClick: null,
       isActive: false
     }
   ];
@@ -78,24 +78,6 @@ function renderFilters() {
 
 renderFilters();
 
-const tasksContainerElement = document.querySelector(`.board__tasks`);
-
-/**
- * Функция отображает случайное количество карточек задач
- */
-function showTasks() {
-  removeChilds(tasksContainerElement);
-  const tasksCount = randomInteger(10) + 3;
-  const tasks = Array(tasksCount).fill().map(() => new Task(createMockTask()));
-
-  const tasksFragment = document.createDocumentFragment();
-
-  for (const task of tasks) {
-    tasksFragment.appendChild(task.render());
-  }
-
-  tasksContainerElement.appendChild(tasksFragment);
-}
-
-showTasks();
+const tasksBoard = new TasksBoard();
+document.querySelector(`main`).append(tasksBoard.render());
 

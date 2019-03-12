@@ -132,19 +132,6 @@
           <div class="result__cards"></div>
         </section>
       </section>
-
-      <section class="board container">
-        <p class="board__no-tasks visually-hidden">
-          Congratulations, all tasks were completed! To create a new click on
-          «add new task» button.
-        </p>
-
-        <div class="board__tasks">
-
-        </div>
-
-        <button class="load-more" type="button">load more</button>
-      </section>
     </main>
 
     <template id="filter-template">
@@ -466,6 +453,18 @@
           delete
         </button>
       </span>
+    </template>
+
+    <template id="tasks-board">
+      <section class="board container">
+        <p class="board__no-tasks visually-hidden">
+          Congratulations, all tasks were completed! To create a new click on
+          «add new task» button.
+        </p>
+        <div class="board__tasks">
+        </div>
+        <button class="load-more" type="button">load more</button>
+      </section>
     </template>
 
     <script src="bundle.js"></script>
