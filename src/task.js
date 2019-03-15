@@ -28,6 +28,7 @@ export default class Task extends Component {
     this._onSubmit = null;
     this._onEditEvent = this._onEditEvent.bind(this);
     this._onESCkeydown = this._onESCkeydown.bind(this);
+    this._onDocumentClick = this._onDocumentClick.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onChangeIsRepeated = this._onChangeIsRepeated.bind(this);
     this._onChangeHasDueDate = this._onChangeHasDueDate.bind(this);
@@ -50,8 +51,10 @@ export default class Task extends Component {
    * Отмена редактирования
    */
   cancelEdit() {
-    this._isEdit = false;
-    this.update();
+    if (this._isEdit) {
+      this._isEdit = false;
+      this.update();
+    }
   }
 
   /**
@@ -62,6 +65,22 @@ export default class Task extends Component {
     if (evt.keyCode === ESC_KEYCODE) {
       this.cancelEdit();
     }
+  }
+
+  /**
+   * Обработчик события клика на странице - для выхода из редактирования
+   * если клик вне карточке задачи
+   * @param {*} evt  - событие
+   */
+  _onDocumentClick(evt) {
+    let targetElement = evt.target;
+    do {
+      if (targetElement === this._element) {
+        return;
+      }
+      targetElement = targetElement.parentNode;
+    } while (targetElement);
+    this.cancelEdit();
   }
 
   /**
@@ -199,6 +218,7 @@ export default class Task extends Component {
   bind() {
     this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, this._onEditEvent);
     document.addEventListener(`keydown`, this._onESCkeydown);
+    document.addEventListener(`click`, this._onDocumentClick);
     this._element.querySelector(`.card__text`).addEventListener(`click`, this._onEditEvent);
     this._element.querySelector(`.card__form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onChangeHasDueDate);
@@ -218,6 +238,7 @@ export default class Task extends Component {
     this._element.querySelector(`.card__btn--edit`).removeEventListener(`click`, this._onEditButtonClick);
     this._element.querySelector(`.card__text`).removeEventListener(`click`, this._onEditButtonClick);
     document.removeEventListener(`keydown`, this._onESCkeydown);
+    document.removeEventListener(`click`, this._onDocumentClick);
     this._element.querySelector(`.card__form`).removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).removeEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).removeEventListener(`click`, this._onChangeIsRepeated);
