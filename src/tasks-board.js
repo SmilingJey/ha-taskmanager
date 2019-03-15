@@ -86,6 +86,10 @@ export default class TasksBoard extends Component {
       task.element.parentElement.replaceChild(this._createTask(data).render(), task.element);
       task.unrender();
     };
+
+    task.onDelete = () => {
+      this._tasks.splice(this._tasks.indexOf(taskData), 1);
+    };
     return task;
   }
 

@@ -12,7 +12,7 @@ const ENTER_KEYCODE = 13;
  */
 export default class Task extends Component {
   /**
-   * Создание карточки азадчи
+   * Создание карточки задачи
    * @param {Object} data - описание задачи
    */
   constructor(data) {
@@ -27,7 +27,9 @@ export default class Task extends Component {
     this._repeatingDays = data.repeatingDays;
 
     this._onSubmit = null;
+    this._onDelete = null;
     this._onEditEvent = this._onEditEvent.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onESCkeydown = this._onESCkeydown.bind(this);
     this._onDocumentClick = this._onDocumentClick.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
@@ -136,6 +138,24 @@ export default class Task extends Component {
     }
 
     return true;
+  }
+
+  /**
+   * Обработчик нажатия на кнопку удаления задачи
+   */
+  _onDeleteButtonClick() {
+    this.unrender();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
+  /**
+   * Задание обработчика события удаления задачи
+   * @param {Function} fn - обработчик события удаления задачи
+   */
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   /**
@@ -248,6 +268,7 @@ export default class Task extends Component {
    */
   bind() {
     this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, this._onEditEvent);
+    this._element.querySelector(`.card__delete`).addEventListener(`click`, this._onDeleteButtonClick);
     document.addEventListener(`keydown`, this._onESCkeydown);
     document.addEventListener(`click`, this._onDocumentClick);
     this._element.querySelector(`.card__text`).addEventListener(`click`, this._onEditEvent);
@@ -268,6 +289,7 @@ export default class Task extends Component {
    */
   unbind() {
     this._element.querySelector(`.card__btn--edit`).removeEventListener(`click`, this._onEditButtonClick);
+    this._element.querySelector(`.card__delete`).removeEventListener(`click`, this._onDeleteButtonClick);
     this._element.querySelector(`.card__text`).removeEventListener(`click`, this._onEditButtonClick);
     document.removeEventListener(`keydown`, this._onESCkeydown);
     document.removeEventListener(`click`, this._onDocumentClick);
