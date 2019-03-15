@@ -20,9 +20,11 @@ export default class HashTag extends Component {
 
   /**
    * Обработчик события удаления хештега
+   * @param {Event} evt - событие
    */
-  _onDeleteButtonClick() {
+  _onDeleteButtonClick(evt) {
     this.unrender();
+    evt.stopPropagation();
   }
 
 
