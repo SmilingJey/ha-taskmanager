@@ -2,6 +2,7 @@ import {removeChilds, setUniqueId} from './utils.js';
 import * as moment from 'moment';
 import flatpickr from "flatpickr";
 import Component from './component.js';
+import HashTag from './hashtag.js';
 
 /**
  * Класс представляет карточку задачи
@@ -334,22 +335,8 @@ export default class Task extends Component {
     const tagsContainerElement = this._element.querySelector(`.card__hashtag-list`);
     removeChilds(tagsContainerElement, `.card__hashtag-inner`);
     for (const tag of this._tags) {
-      tagsContainerElement.prepend(this._renderHashTag(tag));
+      tagsContainerElement.prepend(new HashTag(tag).render());
     }
-  }
-
-  /**
-   * Создает элемент хештега
-   * @param {String} tag - имя хештега
-   * @return {Node} - элемент хештега
-   */
-  _renderHashTag(tag) {
-    const hashTagElement = Task.hashTagTemlate.content.querySelector(`.card__hashtag-inner`).cloneNode(true);
-    const hashTagInputElement = hashTagElement.querySelector(`.card__hashtag-hidden-input`);
-    hashTagInputElement.value = tag;
-    const hashTagNameElement = hashTagElement.querySelector(`.card__hashtag-name`);
-    hashTagNameElement.textContent = `#${tag}`;
-    return hashTagElement;
   }
 
   /**
@@ -368,4 +355,3 @@ export default class Task extends Component {
 
 Task.counter = 0;
 Task.temlate = document.querySelector(`#card-template`).content.querySelector(`.card`);
-Task.hashTagTemlate = document.querySelector(`#task-hashtag-template`);
