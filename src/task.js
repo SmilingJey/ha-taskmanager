@@ -5,6 +5,7 @@ import Component from './component.js';
 import HashTag from './hashtag.js';
 
 const ESC_KEYCODE = 27;
+const ENTER_KEYCODE = 13;
 
 /**
  * Класс представляет карточку задачи
@@ -32,6 +33,7 @@ export default class Task extends Component {
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onChangeIsRepeated = this._onChangeIsRepeated.bind(this);
     this._onChangeHasDueDate = this._onChangeHasDueDate.bind(this);
+    this._onHashtagInputKeydown = this._onHashtagInputKeydown.bind(this);
 
     this._isEdit = false;
 
@@ -97,6 +99,43 @@ export default class Task extends Component {
   _onChangeHasDueDate() {
     this._state.hasDueDate = !this._state.hasDueDate;
     this._updateHasDueDate();
+  }
+
+  /**
+   * Обработчик события нажатия клавиши в поле ввода хештега
+   * @param {Event} evt - событие
+   */
+  _onHashtagInputKeydown(evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      const hashtagInputElement = this._element.querySelector(`.card__hashtag-input`);
+      const text = hashtagInputElement.value.trim();
+      if (this._checkHashtagText(text)) {
+        this._addHashtag(text);
+      }
+      evt.preventDefault();
+    }
+  }
+
+  /**
+   * Проверка на корректность ввода хештега
+   * @param {String} text - текст хештега
+   * @return {Boolean} - возвращает корректен ли ввод хештега
+   */
+  _checkHashtagText(text) {
+    const hashtagListElement = this._element.querySelector(`.card__hashtag-list`);
+    if (hashtagListElement.childElementCount >= 5) {
+      return false;
+    }
+
+    if (text.charAt(0) !== `#` || text.indexOf(` `) !== -1) {
+      return false;
+    }
+
+    if (text.length < 3 || text.length > 20) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -178,14 +217,6 @@ export default class Task extends Component {
         target.color = value;
       },
 
-      'hashtag-input': function (value) {
-        value.trim().split(` `).forEach((item) => {
-          if (item.length > 2) {
-            target.tags.add(item);
-          }
-        });
-      },
-
       date(value) {
         if (!target.dueDate) {
           target.dueDate = new Date();
@@ -223,6 +254,7 @@ export default class Task extends Component {
     this._element.querySelector(`.card__form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, this._onChangeIsRepeated);
+    this._element.querySelector(`.card__hashtag-input`).addEventListener(`keydown`, this._onHashtagInputKeydown);
 
     const dataInputElement = this._element.querySelector(`.card__date`);
     flatpickr(dataInputElement, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
@@ -242,6 +274,7 @@ export default class Task extends Component {
     this._element.querySelector(`.card__form`).removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).removeEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).removeEventListener(`click`, this._onChangeIsRepeated);
+    this._element.querySelector(`.card__hashtag-input`).removeEventListener(`keydown`, this._onHashtagInputKeydown);
   }
 
   /**
@@ -381,8 +414,17 @@ export default class Task extends Component {
     const tagsContainerElement = this._element.querySelector(`.card__hashtag-list`);
     removeChilds(tagsContainerElement, `.card__hashtag-inner`);
     for (const tag of this._tags) {
-      tagsContainerElement.prepend(new HashTag(tag).render());
+      this._addHashtag(tag);
     }
+  }
+
+  /**
+   * Добавляет новый хештег к карточке задачи
+   * @param {String} tag - текст тега
+   */
+  _addHashtag(tag) {
+    const tagsContainerElement = this._element.querySelector(`.card__hashtag-list`);
+    tagsContainerElement.prepend(new HashTag(tag).render());
   }
 
   /**

@@ -7,11 +7,11 @@ const TITLES = [
 ];
 
 const TAGS = [
-  `homework`,
-  `theory`,
-  `practice`,
-  `intensive`,
-  `keks`
+  `#homework`,
+  `#theory`,
+  `#practice`,
+  `#intensive`,
+  `#keks`
 ];
 
 const COLORS = [

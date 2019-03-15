@@ -34,7 +34,7 @@ export default class HashTag extends Component {
     const hashTagInputElement = this._element.querySelector(`.card__hashtag-hidden-input`);
     hashTagInputElement.value = this._text;
     const hashTagNameElement = this._element.querySelector(`.card__hashtag-name`);
-    hashTagNameElement.textContent = `#${this._text}`;
+    hashTagNameElement.textContent = this._text;
   }
 
   bind() {
