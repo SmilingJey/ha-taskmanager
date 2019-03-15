@@ -408,7 +408,7 @@ export default class Task extends Component {
     const repeatDaysFieldsetElement = this._element.querySelector(`.card__repeat-days`);
     statusElement.textContent = this._state.isRepeated ? `YES` : `NO`;
     repeatDaysFieldsetElement.disabled = !this._state.isRepeated;
-    if (this._isRepeated) {
+    if (this._state.isRepeated) {
       this._element.classList.add(`card--repeat`);
     } else {
       this._element.classList.remove(`card--repeat`);

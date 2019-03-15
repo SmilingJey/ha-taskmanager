@@ -32,7 +32,7 @@ const DAYS = [
  */
 function createMockTask() {
   const repeatingDays = {};
-  DAYS.map((item) => (repeatingDays[item] = randomBoolean()));
+  DAYS.map((item) => (repeatingDays[item] = randomBoolean(0.1)));
 
   return {
     title: randomArrayItem(TITLES),
