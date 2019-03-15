@@ -82,6 +82,7 @@ export default class TasksBoard extends Component {
   _createTask(taskData) {
     const task = new Task(taskData);
     task.onSubmit = (data) => {
+      this._tasks[taskData] = data;
       task.element.parentElement.replaceChild(this._createTask(data).render(), task.element);
       task.unrender();
     };

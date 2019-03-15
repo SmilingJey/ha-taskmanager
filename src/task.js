@@ -4,6 +4,8 @@ import flatpickr from "flatpickr";
 import Component from './component.js';
 import HashTag from './hashtag.js';
 
+const ESC_KEYCODE = 27;
+
 /**
  * Класс представляет карточку задачи
  */
@@ -24,7 +26,8 @@ export default class Task extends Component {
     this._repeatingDays = data.repeatingDays;
 
     this._onSubmit = null;
-    this._onEditButtonClick = this._onEditButtonClick.bind(this);
+    this._onEditEvent = this._onEditEvent.bind(this);
+    this._onESCkeydown = this._onESCkeydown.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onChangeIsRepeated = this._onChangeIsRepeated.bind(this);
     this._onChangeHasDueDate = this._onChangeHasDueDate.bind(this);
@@ -36,11 +39,29 @@ export default class Task extends Component {
   }
 
   /**
-   * Обработчик клика на кнопке "EDIT"
+   * Обработчик события начала редактирования
    */
-  _onEditButtonClick() {
+  _onEditEvent() {
     this._isEdit = true;
     this._updateIsEdit();
+  }
+
+  /**
+   * Отмена редактирования
+   */
+  cancelEdit() {
+    this._isEdit = false;
+    this.update();
+  }
+
+  /**
+   * Обработчик нажатия клавиатуры
+   * @param {*} evt - событие
+   */
+  _onESCkeydown(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      this.cancelEdit();
+    }
   }
 
   /**
@@ -176,7 +197,9 @@ export default class Task extends Component {
    * Установка обработчиков событий
    */
   bind() {
-    this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, this._onEditButtonClick);
+    this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, this._onEditEvent);
+    document.addEventListener(`keydown`, this._onESCkeydown);
+    this._element.querySelector(`.card__text`).addEventListener(`click`, this._onEditEvent);
     this._element.querySelector(`.card__form`).addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, this._onChangeIsRepeated);
@@ -193,6 +216,8 @@ export default class Task extends Component {
    */
   unbind() {
     this._element.querySelector(`.card__btn--edit`).removeEventListener(`click`, this._onEditButtonClick);
+    this._element.querySelector(`.card__text`).removeEventListener(`click`, this._onEditButtonClick);
+    document.removeEventListener(`keydown`, this._onESCkeydown);
     this._element.querySelector(`.card__form`).removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`).removeEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).removeEventListener(`click`, this._onChangeIsRepeated);
