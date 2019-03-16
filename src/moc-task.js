@@ -7,11 +7,11 @@ const TITLES = [
 ];
 
 const TAGS = [
-  `homework`,
-  `theory`,
-  `practice`,
-  `intensive`,
-  `keks`
+  `#homework`,
+  `#theory`,
+  `#practice`,
+  `#intensive`,
+  `#keks`
 ];
 
 const COLORS = [
@@ -26,28 +26,21 @@ const DAYS = [
   `mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`
 ];
 
-let taskCount = 0;
-
 /**
  * Функция возвращает случайно сгенерированную задачу
  * @return {Object} - задача
  */
 function createMockTask() {
   const repeatingDays = {};
-  DAYS.map((item) => (repeatingDays[item] = randomBoolean()));
+  DAYS.map((item) => (repeatingDays[item] = randomBoolean(0.1)));
 
   return {
-    number: taskCount++,
     title: randomArrayItem(TITLES),
-    hasDeadline: randomBoolean(),
-    dueDate: Date.now() + 1 + randomInteger(7 * 24 * 3600 * 1000),
-    tags: new Set(randomArrayFromArray(TAGS).slice(0, 3)),
-    picture: randomBoolean() ? `//picsum.photos/100/100?r=${Math.random()}` : ``,
     color: randomArrayItem(COLORS),
-    isRepeating: randomBoolean(),
+    tags: new Set(randomArrayFromArray(TAGS).slice(0, 3)),
+    dueDate: randomBoolean() ? Date.now() + 1 + randomInteger(7 * 24 * 3600 * 1000) : ``,
     repeatingDays,
-    isFavorite: randomBoolean(),
-    isDone: randomBoolean()
+    picture: randomBoolean() ? `//picsum.photos/100/100?r=${Math.random()}` : ``,
   };
 }
 

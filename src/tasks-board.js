@@ -69,9 +69,28 @@ export default class TasksBoard extends Component {
     removeChilds(tasksContainerElement);
     const tasksFragment = document.createDocumentFragment();
     for (const taskData of tasksData) {
-      tasksFragment.appendChild(new Task(taskData).render());
+      tasksFragment.appendChild(this._createTask(taskData).render());
     }
     tasksContainerElement.appendChild(tasksFragment);
+  }
+
+  /**
+   * Создает объект задачи и задает обработчик сохранения
+   * @param {Object} taskData - описание точки путешествия
+   * @return {Object} объект точки путешествия
+   */
+  _createTask(taskData) {
+    const task = new Task(taskData);
+    task.onSubmit = (data) => {
+      this._tasks[taskData] = data;
+      task.element.parentElement.replaceChild(this._createTask(data).render(), task.element);
+      task.unrender();
+    };
+
+    task.onDelete = () => {
+      this._tasks.splice(this._tasks.indexOf(taskData), 1);
+    };
+    return task;
   }
 
   /**
