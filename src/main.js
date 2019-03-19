@@ -1,83 +1,25 @@
-import {randomInteger} from './utils.js';
-import createFilterElement from './filter.js';
 import TasksBoard from './tasks-board.js';
+import FilterList from './filters-list.js';
+import {insertAfter} from './utils.js';
+import TasksData from './tasks-data.js';
 
+const tasksData = new TasksData();
 
-/**
- * Функция отображает список фильтров
- */
-function renderFilters() {
-  const filterDefinitions = [
-    {
-      id: `all`,
-      name: `ALL`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: true
-    },
+const filtersList = new FilterList(tasksData.getTasksData.bind(tasksData));
 
-    {
-      id: `overdue`,
-      name: `OVERDUE`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
+const tasksBoard = new TasksBoard({
+  getTasksData: tasksData.getTasksData.bind(tasksData),
+  deleteTask: tasksData.deleteTask.bind(tasksData),
+  updateTask: tasksData.updateTask.bind(tasksData),
+});
 
-    {
-      id: `today`,
-      name: `TODAY`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
+tasksData.onDataChange = () => {
+  filtersList.updateCount();
+};
 
-    {
-      id: `favorites`,
-      name: `FAVORITES`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
+filtersList.onFilter = (filterFunction) => {
+  tasksBoard.filterFunction = filterFunction;
+};
 
-    {
-      id: `repeating`,
-      name: `REPEATING`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `tags`,
-      name: `TAGS`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `archive`,
-      name: `ARCHIVE`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    }
-  ];
-
-  const filtersFragment = document.createDocumentFragment();
-  const filterElements = filterDefinitions.map(createFilterElement);
-
-  for (const filterElement of filterElements) {
-    filtersFragment.appendChild(filterElement);
-  }
-
-  const filtersContainerElement = document.querySelector(`.main__filter`);
-  filtersContainerElement.appendChild(filtersFragment);
-}
-
-renderFilters();
-
-const tasksBoard = new TasksBoard();
+insertAfter(filtersList.render(), document.querySelector(`.main__search`));
 document.querySelector(`main`).append(tasksBoard.render());
-

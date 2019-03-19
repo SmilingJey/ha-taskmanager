@@ -1,24 +1,66 @@
-const filterTemlate = document.querySelector(`#filter-template`);
+import Component from './component.js';
 
 /**
- * Возвращает элемент фильтра, созданный из шаблона #filter-template
- * @param {Object} filterDefinition - описание фильтра
- * @return {Node} - возвращает элемент фильтра
+ * Класс представляет фильтр
  */
-function createFilterElement(filterDefinition) {
-  const filterElement = filterTemlate.content.cloneNode(true);
+export default class Filter extends Component {
+  constructor(data, getDataCallback) {
+    super();
 
-  const filterInputElement = filterElement.querySelector(`input`);
-  filterInputElement.setAttribute(`id`, `filter__${filterDefinition.id}`);
-  filterInputElement.checked = filterDefinition.isActive;
-  filterInputElement.disabled = filterDefinition.tasksCount === 0;
+    this._id = data.id;
+    this._name = data.name;
+    this._isActive = data.isActive;
+    this._filterFunction = data.filterFunction;
 
-  const filterLabelElement = filterElement.querySelector(`label`);
-  filterLabelElement.innerHTML = `${filterDefinition.name} <span class="filter__${filterDefinition.id}-count">${filterDefinition.tasksCount}</span>`;
-  filterLabelElement.setAttribute(`for`, `filter__${filterDefinition.id}`);
-  filterLabelElement.addEventListener(`click`, filterDefinition.onClick);
+    this._onFilter = null;
+    this._onClick = this._onClick.bind(this);
 
-  return filterElement;
+    this._getDataCallback = getDataCallback;
+  }
+
+  get template() {
+    return Filter.temlate.content.cloneNode(true);
+  }
+
+  update() {
+    const itemCount = 10;
+
+    const filterInputElement = this._element.querySelector(`input`);
+    filterInputElement.setAttribute(`id`, `filter__${this._id}`);
+    filterInputElement.checked = this._isActive;
+    filterInputElement.disabled = itemCount === 0;
+
+    const filterLabelElement = this._element.querySelector(`label`);
+    filterLabelElement.innerHTML = `${this._name} <span class="filter__${this.id}-count">${itemCount}</span>`;
+
+    filterLabelElement.htmlFor = `filter__${this._id}`;
+
+    this.updateCount();
+  }
+
+  updateCount() {
+    const countElement = this._element.querySelector(`.filter__${this.id}-count`);
+    countElement.textContent = this._getDataCallback().filter(this._filterFunction).length;
+  }
+
+
+  set onFilter(fn) {
+    this._onFilter = fn;
+  }
+
+  _onClick() {
+    if (typeof this._onFilter === `function`) {
+      this._onFilter(this._filterFunction);
+    }
+  }
+
+  bind() {
+    this._element.querySelector(`input`).addEventListener(`change`, this._onClick);
+  }
+
+  unbind() {
+    this._element.querySelector(`input`).removeEventListener(`change`, this._onClick);
+  }
 }
 
-export default createFilterElement;
+Filter.temlate = document.querySelector(`#filter-template`);

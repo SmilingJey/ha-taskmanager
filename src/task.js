@@ -25,6 +25,8 @@ export default class Task extends Component {
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
+    this._isArchive = data.isArchive;
+    this._isFavorite = data.isFavorite;
 
     this._onSubmit = null;
     this._onDelete = null;
@@ -323,6 +325,8 @@ export default class Task extends Component {
     this._updateIsRepeated();
     this._updateRepeatingDays();
     this._updateTags();
+    this._updateIsArchive();
+    this._updateIsFavorite();
   }
 
   /**
@@ -460,6 +464,24 @@ export default class Task extends Component {
     const labelElement = this._element.querySelector(`label[for=${oldId}]`);
     inputElement.id = newId;
     labelElement.htmlFor = newId;
+  }
+
+  _updateIsArchive() {
+    const buttonElement = this._element.querySelector(`.card__btn--archive`);
+    if (!this._isArchive) {
+      buttonElement.classList.remove(`card__btn--disabled`);
+    } else {
+      buttonElement.classList.add(`card__btn--disabled`);
+    }
+  }
+
+  _updateIsFavorite() {
+    const buttonElement = this._element.querySelector(`.card__btn--favorites`);
+    if (!this._isFavorite) {
+      buttonElement.classList.remove(`card__btn--disabled`);
+    } else {
+      buttonElement.classList.add(`card__btn--disabled`);
+    }
   }
 }
 

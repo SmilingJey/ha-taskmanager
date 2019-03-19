@@ -37,10 +37,12 @@ function createMockTask() {
   return {
     title: randomArrayItem(TITLES),
     color: randomArrayItem(COLORS),
-    tags: new Set(randomArrayFromArray(TAGS).slice(0, 3)),
-    dueDate: randomBoolean() ? Date.now() + 1 + randomInteger(7 * 24 * 3600 * 1000) : ``,
+    tags: new Set(randomArrayFromArray(TAGS).slice(0, 2)),
+    dueDate: randomBoolean() ? Date.now() + 1 + randomInteger(5 * 24 * 3600 * 1000) - 2 * 24 * 3600 * 1000 : ``,
     repeatingDays,
     picture: randomBoolean() ? `//picsum.photos/100/100?r=${Math.random()}` : ``,
+    isArchive: randomBoolean(),
+    isFavorite: randomBoolean(),
   };
 }
 

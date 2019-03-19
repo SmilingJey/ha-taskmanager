@@ -56,6 +56,15 @@ function removeChilds(element, childSelector) {
 }
 
 /**
+ * Вставвка узла после требуемого
+ * @param {Node} newNode - вставляемый узел
+ * @param {Node} referenceNode - узел за которым происходи вставка
+ */
+function insertAfter(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+/**
  * Задает уникальные атрибуты id и for всем элементам контейнера
  * @param {*} containerElement - контайнер элементов
  * @param {*} number - номер
@@ -72,4 +81,4 @@ function setUniqueId(containerElement, number) {
 }
 
 export {randomInteger, randomBoolean, randomArrayFromArray,
-  removeChilds, setUniqueId, randomArrayItem};
+  removeChilds, setUniqueId, randomArrayItem, insertAfter};
