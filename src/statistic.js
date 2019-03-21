@@ -212,7 +212,7 @@ export default class Statistic extends Component {
     const dateInputElement = this._element.querySelector(`.statistic__period-input`);
     const dates = dateInputElement.value.split(` - `);
     const startDate = moment(dates[0], `DD MMM`).startOf(`day`);
-    const endDate = dates.length > 1 ? moment(dates[1], `DD MMM`).endOf(`day`) : moment(dates[0], `DD MMM`).endOf(`day`);
+    const endDate = dates.length > 1 ? moment(dates[1], `DD MMM`).endOf(`day`) : startDate;
     const filteredTasks = tasks.filter((task) => {
       return task.dueDate && moment(task.dueDate).isBetween(startDate, endDate);
     });
@@ -254,17 +254,12 @@ export default class Statistic extends Component {
     }
 
     const tasks = this._getTasksData();
-    const tags = {};
 
-    for (const task of tasks) {
-      for (const tag of task.tags) {
-        if (tags.hasOwnProperty(tag)) {
-          tags[tag]++;
-        } else {
-          tags[tag] = 1;
-        }
-      }
-    }
+    const tasksTags = tasks.reduce((array, task) => array.concat(Array.from(task.tags)), []);
+    const tags = tasksTags.reduce((obj, tag) => {
+      obj[tag] = (obj[tag] || 0) + 1;
+      return obj;
+    }, {});
 
     const labels = Object.keys(tags);
     const counts = Object.values(tags);

@@ -70,7 +70,13 @@ export default class Task extends Component {
 
     if (!this._flatpickrTime) {
       const timeInputElement = this._element.querySelector(`.card__time`);
-      this._flatpickrTime = flatpickr(timeInputElement, {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
+      this._flatpickrTime = flatpickr(timeInputElement, {
+        enableTime: true,
+        noCalendar: true,
+        altInput: true,
+        altFormat: `h:i K`,
+        dateFormat: `h:i K`
+      });
     }
   }
 
@@ -441,9 +447,7 @@ export default class Task extends Component {
     for (const day in this._repeatingDays) {
       if (this._repeatingDays.hasOwnProperty(day)) {
         const dayElement = this._element.querySelector(`#repeat-${day}-${this._number}`);
-        if (dayElement) {
-          dayElement.checked = this._repeatingDays[day];
-        }
+        dayElement.checked = this._repeatingDays[day];
       }
     }
   }
