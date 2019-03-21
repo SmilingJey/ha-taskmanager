@@ -7,6 +7,14 @@ import HashTag from './hashtag.js';
 const ESC_KEYCODE = 27;
 const ENTER_KEYCODE = 13;
 
+const TASK_COLORS = [
+  `black`,
+  `yellow`,
+  `blue`,
+  `green`,
+  `pink`
+];
+
 /**
  * Класс представляет карточку задачи
  */
@@ -43,6 +51,9 @@ export default class Task extends Component {
 
     this._state.hasDueDate = this._dueDate && moment(this._dueDate).isValid();
     this._state.isRepeated = Object.values(this._repeatingDays).some((it) => it === true);
+
+    this._flatpickrDate = null;
+    this._flatpickrTime = null;
   }
 
   /**
@@ -51,6 +62,16 @@ export default class Task extends Component {
   _onEditEvent() {
     this._isEdit = true;
     this._updateIsEdit();
+
+    if (!this._flatpickrDate) {
+      const dataInputElement = this._element.querySelector(`.card__date`);
+      this._flatpickrDate = flatpickr(dataInputElement, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
+    }
+
+    if (!this._flatpickrTime) {
+      const timeInputElement = this._element.querySelector(`.card__time`);
+      this._flatpickrTime = flatpickr(timeInputElement, {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
+    }
   }
 
   /**
@@ -278,12 +299,6 @@ export default class Task extends Component {
     this._element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, this._onChangeIsRepeated);
     this._element.querySelector(`.card__hashtag-input`).addEventListener(`keydown`, this._onHashtagInputKeydown);
-
-    const dataInputElement = this._element.querySelector(`.card__date`);
-    flatpickr(dataInputElement, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
-
-    const timeInputElement = this._element.querySelector(`.card__time`);
-    flatpickr(timeInputElement, {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
   }
 
   /**
@@ -483,7 +498,20 @@ export default class Task extends Component {
       buttonElement.classList.add(`card__btn--disabled`);
     }
   }
+
+  unrender() {
+    super.unrender();
+    if (this._flatpickrDate) {
+      this._flatpickrDate.destroy();
+    }
+
+    if (this._flatpickrTime) {
+      this._flatpickrDate.destroy();
+    }
+  }
 }
 
 Task.counter = 0;
 Task.temlate = document.querySelector(`#card-template`).content.querySelector(`.card`);
+
+export {TASK_COLORS};

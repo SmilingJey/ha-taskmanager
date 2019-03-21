@@ -10,9 +10,11 @@ export default class TasksBoard extends Component {
     super();
     this._filterFunction = null;
 
-    this._getTasks = dataCallbacks.getTasksData;
+    this._getTasksData = dataCallbacks.getTasksData;
     this._deleteTask = dataCallbacks.deleteTask;
-    this._updateTask = dataCallbacks.updateTask;
+    this._updateTaskData = dataCallbacks.updateTask;
+
+    this._tasks = [];
   }
 
   /**
@@ -57,9 +59,9 @@ export default class TasksBoard extends Component {
    * Отображение компонента
    */
   update() {
-    const tasks = this._getTasks();
-    const displayedTasks = this.getDisplayedPoints(tasks);
-    this._updateNoTaskMessage(tasks.length > 0);
+    const tasksData = this._getTasksData();
+    const displayedTasks = this.getDisplayedPoints(tasksData);
+    this._updateNoTaskMessage(displayedTasks.length > 0);
     this._updateTasks(displayedTasks);
   }
 
@@ -68,11 +70,15 @@ export default class TasksBoard extends Component {
    * @param {Array} tasksData - массив задач
    */
   _updateTasks(tasksData) {
+    for (const task of this._tasks) {
+      task.unrender();
+    }
     const tasksContainerElement = this._element.querySelector(`.board__tasks`);
     removeChilds(tasksContainerElement);
     const tasksFragment = document.createDocumentFragment();
-    for (const taskData of tasksData) {
-      tasksFragment.appendChild(this._createTask(taskData).render());
+    this._tasks = tasksData.map((taskData) => this._createTask(taskData));
+    for (const task of this._tasks) {
+      tasksFragment.appendChild(task.render());
     }
     tasksContainerElement.appendChild(tasksFragment);
   }
@@ -85,13 +91,13 @@ export default class TasksBoard extends Component {
   _createTask(taskData) {
     const task = new Task(taskData);
     task.onSubmit = (data) => {
-      this._updateTasks(taskData, data);
+      this._updateTaskData(taskData, data);
       task.element.parentElement.replaceChild(this._createTask(data).render(), task.element);
       task.unrender();
     };
 
     task.onDelete = () => {
-      this._deleteTasks(taskData);
+      this._deleteTask(taskData);
     };
     return task;
   }

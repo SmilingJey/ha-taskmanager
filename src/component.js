@@ -32,6 +32,14 @@ export default class Component {
     this._element = null;
   }
 
+  setVisible(isVisible) {
+    if (isVisible) {
+      this._element.classList.remove(`visually-hidden`);
+    } else {
+      this._element.classList.add(`visually-hidden`);
+    }
+  }
+
   update() {}
   bind() {}
   unbind() {}

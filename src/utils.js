@@ -80,5 +80,18 @@ function setUniqueId(containerElement, number) {
   }
 }
 
+/**
+ * Генерирует случайный цвет
+ * @return {String} - цвет в hex формате
+ */
+function getRandomColorHex() {
+  const hex = `0123456789ABCDEF`;
+  let color = `#`;
+  for (let i = 1; i <= 6; i++) {
+    color += hex[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 export {randomInteger, randomBoolean, randomArrayFromArray,
-  removeChilds, setUniqueId, randomArrayItem, insertAfter};
+  removeChilds, setUniqueId, randomArrayItem, insertAfter, getRandomColorHex};

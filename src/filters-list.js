@@ -9,37 +9,31 @@ const filtersData = [
     filterFunction: () => true,
     isActive: true,
   },
-
   {
     id: `overdue`,
     name: `OVERDUE`,
     filterFunction: (data) => data.dueDate && data.dueDate < Date.now(),
   },
-
   {
     id: `today`,
     name: `TODAY`,
     filterFunction: (data) => moment(data.dueDate).isSame(Date.now(), `day`),
   },
-
   {
     id: `favorites`,
     name: `FAVORITES`,
     filterFunction: (data) => data.isFavorite,
   },
-
   {
     id: `repeating`,
     name: `REPEATING`,
     filterFunction: (data) => Object.values(data.repeatingDays).includes(true),
   },
-
   {
     id: `tags`,
     name: `TAGS`,
     filterFunction: (data) => data.tags && data.tags.size > 0,
   },
-
   {
     id: `archive`,
     name: `ARCHIVE`,
@@ -47,6 +41,9 @@ const filtersData = [
   }
 ];
 
+/**
+ * Класс представляет список фильтров
+ */
 export default class FilterList extends Component {
   constructor(getDataCallback) {
     super();
@@ -55,35 +52,53 @@ export default class FilterList extends Component {
     this._getDataCallback = getDataCallback;
   }
 
+  /**
+   * Установка обработчика события выбора фильтра
+   * @param {Function} fn - обработчик
+   */
+  set onFilter(fn) {
+    this._onFilter = fn;
+  }
+
+  /**
+   * Возвращает пустой шаблон фильтра
+   */
   get template() {
     const elem = document.createElement(`section`);
     elem.classList.add(`main__filter`, `filter`, `container`);
     return elem;
   }
 
+  /**
+   * Обновление списка фильтров
+   */
   update() {
     for (const filter of this._filters) {
       filter.unrender();
     }
 
-    const filtersFragment = document.createDocumentFragment();
     this._filters = filtersData.map(this._createFilter.bind(this));
+    const filtersFragment = document.createDocumentFragment();
     for (const filter of this._filters) {
       filtersFragment.appendChild(filter.render());
     }
     this._element.appendChild(filtersFragment);
   }
 
+  /**
+   * Обновление количества элементов в фильтре
+   */
   updateCount() {
-    for (const filter of filtersData) {
-      filter.updateCount(this._getDataCallback);
+    for (const filter of this._filters) {
+      filter.update();
     }
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
-  }
-
+  /**
+   * Создание фильтра
+   * @param {Object} filterData - данные фильтра
+   * @return {Object} - фильтр
+   */
   _createFilter(filterData) {
     const filter = new Filter(filterData, this._getDataCallback);
     filter.onFilter = (filterFunction) => {
@@ -94,8 +109,11 @@ export default class FilterList extends Component {
     return filter;
   }
 
+  /**
+   * Удаление компонента
+   */
   unrender() {
-    this.super();
+    super.unrender();
     for (const filter of this._filters) {
       filter.unrender();
     }
