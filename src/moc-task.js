@@ -1,25 +1,18 @@
 import {randomInteger, randomBoolean, randomArrayFromArray, randomArrayItem} from './utils.js';
+import {TASK_COLORS} from './task.js';
 
-const TITLES = [
+const MOCK_TITLES = [
   `Изучить теорию`,
   `Сделать домашку`,
   `Пройти интенсив на соточку`
 ];
 
-const TAGS = [
+const MOCK_TAGS = [
   `#homework`,
   `#theory`,
   `#practice`,
   `#intensive`,
   `#keks`
-];
-
-const COLORS = [
-  `black`,
-  `yellow`,
-  `blue`,
-  `green`,
-  `pink`
 ];
 
 const DAYS = [
@@ -35,12 +28,14 @@ function createMockTask() {
   DAYS.map((item) => (repeatingDays[item] = randomBoolean(0.1)));
 
   return {
-    title: randomArrayItem(TITLES),
-    color: randomArrayItem(COLORS),
-    tags: new Set(randomArrayFromArray(TAGS).slice(0, 3)),
-    dueDate: randomBoolean() ? Date.now() + 1 + randomInteger(7 * 24 * 3600 * 1000) : ``,
+    title: randomArrayItem(MOCK_TITLES),
+    color: randomArrayItem(TASK_COLORS),
+    tags: new Set(randomArrayFromArray(MOCK_TAGS).slice(0, 2)),
+    dueDate: randomBoolean() ? Date.now() + 1 + randomInteger(5 * 24 * 3600 * 1000) - 2 * 24 * 3600 * 1000 : ``,
     repeatingDays,
     picture: randomBoolean() ? `//picsum.photos/100/100?r=${Math.random()}` : ``,
+    isArchive: randomBoolean(),
+    isFavorite: randomBoolean(),
   };
 }
 

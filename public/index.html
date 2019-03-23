@@ -2,10 +2,7 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -39,22 +36,10 @@
       <section class="main__control control container">
         <h1 class="control__title">UNFO. TASKMANAGER</h1>
         <section class="control__btn-wrap">
-          <input
-            type="radio"
-            name="control"
-            id="control__task"
-            class="control__input visually-hidden"
-            checked
-          />
+          <input type="radio" name="control" id="control__task" class="control__input visually-hidden" checked />
           <label for="control__task" class="control__label">TASKS</label>
-          <input
-            type="radio"
-            name="control"
-            id="control__new-task"
-            class="control__input visually-hidden"
-          />
-          <label for="control__new-task" class="control__label"
-            >ADD NEW TASK</label
+          <input type="radio" name="control" id="control__new-task" class="control__input visually-hidden" />
+          <label for="control__new-task" class="control__label">ADD NEW TASK</label
           >
           <input
             type="radio"
@@ -76,55 +61,12 @@
       </section>
 
       <section class="main__search search container">
-        <input
-          type="text"
-          id="search__input"
-          class="search__input search__input--hidden"
-          placeholder="START TYPING — SEARCH BY WORD, #HASHTAG OR DATE"
-        />
+        <input type="text" id="search__input" class="search__input search__input--hidden" placeholder="START TYPING — SEARCH BY WORD, #HASHTAG OR DATE" />
         <label class="visually-hidden" for="search__input">Поиск</label>
-      </section>
-
-      <section class="main__filter filter container">
-
-      </section>
-
-      <section class="statistic container visually-hidden">
-        <div class="statistic__line">
-          <div class="statistic__period">
-            <h2 class="statistic__period-title">Task Activity DIAGRAM</h2>
-
-            <div class="statistic-input-wrap">
-              <input
-                class="statistic__period-input"
-                type="text"
-                placeholder="01 Feb - 08 Feb"
-              />
-            </div>
-
-            <p class="statistic__period-result">
-              In total for the specified period
-              <span class="statistic__task-found">0</span> tasks were fulfilled.
-            </p>
-          </div>
-          <div class="statistic__line-graphic visually-hidden">
-            <canvas class="statistic__days" width="550" height="150"></canvas>
-          </div>
-        </div>
-
-        <div class="statistic__circle">
-          <div class="statistic__tags-wrap visually-hidden">
-            <canvas class="statistic__tags" width="400" height="300"></canvas>
-          </div>
-          <div class="statistic__colors-wrap visually-hidden">
-            <canvas class="statistic__colors" width="400" height="300"></canvas>
-          </div>
-        </div>
       </section>
 
       <section class="result container visually-hidden">
         <button class="result__back">back</button>
-
         <section class="result__group">
           <h2 class="result__title">
             #work<span class="result__count">17</span>
@@ -136,15 +78,17 @@
     </main>
 
     <template id="filter-template">
-      <input
-        type="radio"
-        id="filter__id"
-        class="filter__input visually-hidden"
-        name="filter"
-      />
-      <label for="filter__id" class="filter__label"
-      >Filter name<span class="filter__id-count">0</span></label
-      >
+      <div class="filter">
+        <input
+          type="radio"
+          id="filter__id"
+          class="filter__input visually-hidden"
+          name="filter"
+        />
+        <label for="filter__id" class="filter__label"
+        >Filter name<span class="filter__id-count">0</span></label
+        >
+      </div>
     </template>
 
     <template id="card-template">
@@ -467,6 +411,41 @@
         </div>
         <button class="load-more" type="button">load more</button>
       </section>
+    </template>
+
+    <template id="statistic">
+      <section class="statistic container visually-hidden">
+          <div class="statistic__line">
+            <div class="statistic__period">
+              <h2 class="statistic__period-title">Task Activity DIAGRAM</h2>
+
+              <div class="statistic-input-wrap">
+                <input
+                  class="statistic__period-input"
+                  type="text"
+                  placeholder="01 Feb - 08 Feb"
+                />
+              </div>
+
+              <p class="statistic__period-result">
+                In total for the specified period
+                <span class="statistic__task-found">0</span> tasks were fulfilled.
+              </p>
+            </div>
+            <div class="statistic__line-graphic">
+              <canvas class="statistic__days" width="550" height="150"></canvas>
+            </div>
+          </div>
+
+          <div class="statistic__circle">
+            <div class="statistic__tags-wrap">
+              <canvas class="statistic__tags" width="400" height="300"></canvas>
+            </div>
+            <div class="statistic__colors-wrap">
+              <canvas class="statistic__colors" width="400" height="300"></canvas>
+            </div>
+          </div>
+        </section>
     </template>
 
     <script src="bundle.js"></script>

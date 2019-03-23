@@ -56,6 +56,15 @@ function removeChilds(element, childSelector) {
 }
 
 /**
+ * Вставвка узла после требуемого
+ * @param {Node} newNode - вставляемый узел
+ * @param {Node} referenceNode - узел за которым происходи вставка
+ */
+function insertAfter(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+/**
  * Задает уникальные атрибуты id и for всем элементам контейнера
  * @param {*} containerElement - контайнер элементов
  * @param {*} number - номер
@@ -71,5 +80,18 @@ function setUniqueId(containerElement, number) {
   }
 }
 
+/**
+ * Генерирует случайный цвет
+ * @return {String} - цвет в hex формате
+ */
+function getRandomColorHex() {
+  const hex = `0123456789ABCDEF`;
+  let color = `#`;
+  for (let i = 1; i <= 6; i++) {
+    color += hex[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 export {randomInteger, randomBoolean, randomArrayFromArray,
-  removeChilds, setUniqueId, randomArrayItem};
+  removeChilds, setUniqueId, randomArrayItem, insertAfter, getRandomColorHex};

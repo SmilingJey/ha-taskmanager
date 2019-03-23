@@ -1,83 +1,38 @@
-import {randomInteger} from './utils.js';
-import createFilterElement from './filter.js';
 import TasksBoard from './tasks-board.js';
+import FilterList from './filters-list.js';
+import {insertAfter} from './utils.js';
+import TasksData from './tasks-data.js';
+import Statistic from './statistic';
 
+const tasksData = new TasksData();
+const filtersList = new FilterList(tasksData.getTasksData.bind(tasksData));
+const statistic = new Statistic(tasksData.getTasksData.bind(tasksData));
+const tasksBoard = new TasksBoard({
+  getTasksData: tasksData.getTasksData.bind(tasksData),
+  deleteTask: tasksData.deleteTask.bind(tasksData),
+  updateTask: tasksData.updateTask.bind(tasksData),
+});
 
-/**
- * Функция отображает список фильтров
- */
-function renderFilters() {
-  const filterDefinitions = [
-    {
-      id: `all`,
-      name: `ALL`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: true
-    },
+tasksData.onDataChange = () => {
+  filtersList.updateCount();
+};
 
-    {
-      id: `overdue`,
-      name: `OVERDUE`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
+filtersList.onFilter = (filterFunction) => {
+  tasksBoard.filterFunction = filterFunction;
+};
 
-    {
-      id: `today`,
-      name: `TODAY`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `favorites`,
-      name: `FAVORITES`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `repeating`,
-      name: `REPEATING`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `tags`,
-      name: `TAGS`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    },
-
-    {
-      id: `archive`,
-      name: `ARCHIVE`,
-      tasksCount: randomInteger(10),
-      onClick: null,
-      isActive: false
-    }
-  ];
-
-  const filtersFragment = document.createDocumentFragment();
-  const filterElements = filterDefinitions.map(createFilterElement);
-
-  for (const filterElement of filterElements) {
-    filtersFragment.appendChild(filterElement);
+const onControlChange = (evt) => {
+  const id = evt.target.id;
+  tasksBoard.setVisible(id === `control__task`);
+  filtersList.setVisible(id === `control__task`);
+  statistic.setVisible(id === `control__statistic`);
+  if (id === `control__statistic`) {
+    statistic.updateCharts();
   }
+};
 
-  const filtersContainerElement = document.querySelector(`.main__filter`);
-  filtersContainerElement.appendChild(filtersFragment);
-}
+document.querySelector(`.control__btn-wrap`).addEventListener(`change`, onControlChange);
 
-renderFilters();
-
-const tasksBoard = new TasksBoard();
+insertAfter(filtersList.render(), document.querySelector(`.main__search`));
+insertAfter(statistic.render(), document.querySelector(`.main__search`));
 document.querySelector(`main`).append(tasksBoard.render());
-

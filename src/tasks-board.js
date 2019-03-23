@@ -1,17 +1,20 @@
 import Component from './component.js';
-import createMockTask from './moc-task.js';
-import {randomInteger, removeChilds} from './utils.js';
+import {removeChilds} from './utils.js';
 import Task from './task.js';
 
 /**
  * Класс представляет список задач
  */
 export default class TasksBoard extends Component {
-  constructor() {
+  constructor(dataCallbacks) {
     super();
-    const tasksCount = randomInteger(10) + 3;
-    this._tasks = Array(tasksCount).fill().map(createMockTask);
     this._filterFunction = null;
+
+    this._getTasksData = dataCallbacks.getTasksData;
+    this._deleteTask = dataCallbacks.deleteTask;
+    this._updateTaskData = dataCallbacks.updateTask;
+
+    this._tasks = [];
   }
 
   /**
@@ -35,10 +38,11 @@ export default class TasksBoard extends Component {
 
   /**
    * Возвращает массив задач для отображения
-   * @return {Array} - массив задач
+   * @param {Array} tasks - массив задач
+   * @return {Array} - массив задач для отображения
    */
-  getDisplayedPoints() {
-    return this.filterPoints(this._tasks);
+  getDisplayedPoints(tasks) {
+    return this.filterPoints(tasks);
   }
 
   /**
@@ -55,8 +59,9 @@ export default class TasksBoard extends Component {
    * Отображение компонента
    */
   update() {
-    const displayedTasks = this.getDisplayedPoints();
-    this._updateNoTaskMessage(this._tasks.length > 0);
+    const tasksData = this._getTasksData();
+    const displayedTasks = this.getDisplayedPoints(tasksData);
+    this._updateNoTaskMessage(displayedTasks.length > 0);
     this._updateTasks(displayedTasks);
   }
 
@@ -65,11 +70,15 @@ export default class TasksBoard extends Component {
    * @param {Array} tasksData - массив задач
    */
   _updateTasks(tasksData) {
+    for (const task of this._tasks) {
+      task.unrender();
+    }
     const tasksContainerElement = this._element.querySelector(`.board__tasks`);
     removeChilds(tasksContainerElement);
     const tasksFragment = document.createDocumentFragment();
-    for (const taskData of tasksData) {
-      tasksFragment.appendChild(this._createTask(taskData).render());
+    this._tasks = tasksData.map((taskData) => this._createTask(taskData));
+    for (const task of this._tasks) {
+      tasksFragment.appendChild(task.render());
     }
     tasksContainerElement.appendChild(tasksFragment);
   }
@@ -82,13 +91,16 @@ export default class TasksBoard extends Component {
   _createTask(taskData) {
     const task = new Task(taskData);
     task.onSubmit = (data) => {
-      this._tasks[taskData] = data;
-      task.element.parentElement.replaceChild(this._createTask(data).render(), task.element);
+      this._updateTaskData(taskData, data);
+      const updatedTask = this._createTask(data);
+      task.element.parentElement.replaceChild(updatedTask.render(), task.element);
       task.unrender();
+      this._tasks[this._tasks.indexOf(task)] = updatedTask;
     };
 
     task.onDelete = () => {
-      this._tasks.splice(this._tasks.indexOf(taskData), 1);
+      this._tasks.splice(this._tasks.indexOf(task), 1);
+      this._deleteTask(taskData);
     };
     return task;
   }
