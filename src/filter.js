@@ -24,6 +24,21 @@ export default class Filter extends Component {
   }
 
   /**
+   * Возвращает имя фильтра
+   */
+  get name() {
+    return this._name;
+  }
+
+  /**
+   * Задает активен ли фильтр
+   * @param {Boolean} active
+   */
+  set isActive(active) {
+    this._isActive = active;
+  }
+
+  /**
    * Возвращает шаблон фильтра
    * @return {Node} - пустой элемент фильтра
    */
@@ -35,7 +50,8 @@ export default class Filter extends Component {
    * Обновляет данные фильтра
    */
   update() {
-    const itemCount = this._getTasksData().filter(this._filterFunction).length;
+    const tasksData = this._getTasksData();
+    const itemCount = tasksData !== null ? tasksData.filter(this._filterFunction).length : 0;
     const filterInputElement = this._element.querySelector(`input`);
     filterInputElement.setAttribute(`id`, `filter__${this._id}`);
     filterInputElement.checked = this._isActive;
@@ -63,6 +79,10 @@ export default class Filter extends Component {
    * Обработчик события выбор фильтра
    */
   _onChange() {
+    this.dispatchChange();
+  }
+
+  dispatchChange() {
     if (typeof this._onFilter === `function`) {
       this._onFilter(this._filterFunction);
     }

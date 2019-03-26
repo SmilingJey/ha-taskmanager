@@ -8,11 +8,11 @@ import Task from './task.js';
 export default class TasksBoard extends Component {
   constructor(dataCallbacks) {
     super();
-    this._filterFunction = null;
+    this._filterFunction = () => true;
 
-    this._getTasksData = dataCallbacks.getTasksData;
+    this._getTasks = dataCallbacks.getTasks;
     this._deleteTask = dataCallbacks.deleteTask;
-    this._updateTaskData = dataCallbacks.updateTask;
+    this._updateTask = dataCallbacks.updateTask;
 
     this._tasks = [];
   }
@@ -56,13 +56,27 @@ export default class TasksBoard extends Component {
   }
 
   /**
+   * Добавляет новыю задачу задачу
+   * @param {Object} taskData - данные задачи
+   * @param {Boolean} isEdit - открыть задачу в режиме редактирования
+   */
+  addTask(taskData, isEdit = false) {
+    const task = this._createTask(taskData, isEdit);
+    const tasksContainerElement = this._element.querySelector(`.board__tasks`);
+    tasksContainerElement.insertBefore(task.render(), tasksContainerElement.firstChild);
+    this._tasks.unshift(task);
+  }
+
+  /**
    * Отображение компонента
    */
   update() {
-    const tasksData = this._getTasksData();
-    const displayedTasks = this.getDisplayedPoints(tasksData);
-    this._updateNoTaskMessage(displayedTasks.length > 0);
-    this._updateTasks(displayedTasks);
+    const tasksData = this._getTasks();
+    if (tasksData !== null) {
+      const displayedTasks = this.getDisplayedPoints(tasksData).reverse();
+      this._updateNoTaskMessage(displayedTasks.length > 0);
+      this._updateTasks(displayedTasks);
+    }
   }
 
   /**
@@ -86,35 +100,85 @@ export default class TasksBoard extends Component {
   /**
    * Создает объект задачи и задает обработчик сохранения
    * @param {Object} taskData - описание точки путешествия
+   * @param {Boolean} isEdit - в режиме ли редактирования карточка
    * @return {Object} объект точки путешествия
    */
-  _createTask(taskData) {
-    const task = new Task(taskData);
+  _createTask(taskData, isEdit = false) {
+    const task = new Task(taskData, isEdit);
     task.onSubmit = (data) => {
-      this._updateTaskData(taskData, data);
-      const updatedTask = this._createTask(data);
-      task.element.parentElement.replaceChild(updatedTask.render(), task.element);
-      task.unrender();
-      this._tasks[this._tasks.indexOf(task)] = updatedTask;
+      task.savingBlock();
+      task.unsetUnsaved();
+      this._updateTask(data)
+        .then((updatedTaskData) => {
+          const updatedTask = this._createTask(updatedTaskData);
+          task.element.parentElement.replaceChild(updatedTask.render(), task.element);
+          task.unrender();
+          this._tasks[this._tasks.indexOf(task)] = updatedTask;
+          this._updateNoTaskMessage(this._getTasks().length > 0);
+        })
+        .catch(() => {
+          task.shake();
+          task.setUnsaved();
+          task.unblock();
+          this.showErrorMessage();
+        });
     };
 
     task.onDelete = () => {
-      this._tasks.splice(this._tasks.indexOf(task), 1);
-      this._deleteTask(taskData);
+      task.deletingBlock();
+      task.unsetUnsaved();
+      this._deleteTask(taskData)
+        .then(() => {
+          task.unrender();
+          this._tasks.splice(this._tasks.indexOf(task), 1);
+          this._updateNoTaskMessage(this._getTasks().length > 0);
+        })
+        .catch(() => {
+          task.shake();
+          task.setUnsaved();
+          task.unblock();
+          this.showErrorMessage();
+        });
     };
+
     return task;
   }
 
   /**
    * Отображение сообщения о выполнении всех хадач
-   * @param {Boolean} isVisible - выполнены ли все задачи
+   * @param {Boolean} hasTasks - выполнены ли все задачи
    */
-  _updateNoTaskMessage(isVisible) {
+  _updateNoTaskMessage(hasTasks) {
     const noTaskMessageElement = this._element.querySelector(`.board__no-tasks`);
-    if (isVisible) {
+    if (hasTasks) {
       noTaskMessageElement.classList.add(`visually-hidden`);
     } else {
-      noTaskMessageElement.classList.remove(`visually-hidden`);
+      this._showMessage(`Congratulations, all tasks were completed! To create a new click on
+      «add new task» button.`);
     }
+  }
+
+  /**
+   * Отобразить сообщение об ошибке
+   */
+  showErrorMessage() {
+    this._showMessage(` Something went wrong. Check your connection or try again later`);
+  }
+
+  /**
+   * Отобразить сообщение о загрузке задач
+   */
+  showLoadingMessage() {
+    this._showMessage(` Loading tasks...`);
+  }
+
+  /**
+   * Отобразить сообщение
+   * @param {String} text - текст сообщения
+   */
+  _showMessage(text) {
+    const noTaskMessageElement = this._element.querySelector(`.board__no-tasks`);
+    noTaskMessageElement.classList.remove(`visually-hidden`);
+    noTaskMessageElement.textContent = text;
   }
 }
