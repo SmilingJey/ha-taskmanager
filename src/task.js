@@ -22,18 +22,20 @@ export default class Task extends Component {
   /**
    * Создание карточки задачи
    * @param {Object} data - описание задачи
+   * @param {Boolean} isEdit - находится ли в режиме редактирования
    */
-  constructor(data) {
+  constructor(data, isEdit = false) {
     super();
     this._number = Task.counter++;
 
+    this._id = data.id;
     this._title = data.title;
     this._color = data.color;
     this._dueDate = data.dueDate;
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
-    this._isArchive = data.isArchive;
+    this._isDone = data.isDone;
     this._isFavorite = data.isFavorite;
 
     this._onSubmit = null;
@@ -47,10 +49,12 @@ export default class Task extends Component {
     this._onChangeHasDueDate = this._onChangeHasDueDate.bind(this);
     this._onHashtagInputKeydown = this._onHashtagInputKeydown.bind(this);
 
-    this._isEdit = false;
+    this._isEdit = isEdit;
 
     this._state.hasDueDate = this._dueDate && moment(this._dueDate).isValid();
     this._state.isRepeated = Object.values(this._repeatingDays).some((it) => it === true);
+
+    this._state.blocked = false;
 
     this._flatpickrDate = null;
     this._flatpickrTime = null;
@@ -84,7 +88,7 @@ export default class Task extends Component {
    * Отмена редактирования
    */
   cancelEdit() {
-    if (this._isEdit) {
+    if (this._isEdit && !this._state.blocked) {
       this._isEdit = false;
       this.update();
     }
@@ -173,7 +177,6 @@ export default class Task extends Component {
    * Обработчик нажатия на кнопку удаления задачи
    */
   _onDeleteButtonClick() {
-    this.unrender();
     if (typeof this._onDelete === `function`) {
       this._onDelete();
     }
@@ -215,6 +218,7 @@ export default class Task extends Component {
    */
   _processForm(formData) {
     const entry = {
+      id: this._id,
       title: ``,
       color: ``,
       tags: new Set(),
@@ -228,7 +232,9 @@ export default class Task extends Component {
         'sa': false,
         'su': false,
       },
-      picture: this._picture
+      picture: this._picture,
+      isDone: this._isDone,
+      isFavorite: this._isFavorite,
     };
 
     const taskMapper = Task.createFormMapper(entry);
@@ -348,6 +354,58 @@ export default class Task extends Component {
     this._updateTags();
     this._updateIsArchive();
     this._updateIsFavorite();
+  }
+
+  savingBlock() {
+    this._element.querySelector(`.card__save`).textContent = `saving ...`;
+    this._blockInputs();
+  }
+
+  deletingBlock() {
+    this._element.querySelector(`.card__delete`).textContent = `deleting ...`;
+    this._blockInputs();
+  }
+
+  _blockInputs() {
+    this._state.blocked = true;
+    const controlElements = this._element.querySelectorAll(`input, button, textarea`);
+    for (const controlElement of controlElements) {
+      controlElement.disabled = true;
+    }
+  }
+
+  /**
+   * Разблокировать
+   */
+  unblock() {
+    this._state.blocked = false;
+    this._element.querySelector(`.card__save`).textContent = `save`;
+    this._element.querySelector(`.card__delete`).textContent = `delete`;
+    const controlElements = this._element.querySelectorAll(`input, button, textarea`);
+    for (const controlElement of controlElements) {
+      controlElement.disabled = false;
+    }
+  }
+
+  setUnsaved() {
+    const cardInerElement = this._element.querySelector(`.card__inner`);
+    cardInerElement.classList.add(`unsaved-task`);
+  }
+
+  unsetUnsaved() {
+    const cardInerElement = this._element.querySelector(`.card__inner`);
+    cardInerElement.classList.remove(`unsaved-task`);
+  }
+
+  /**
+   * Потрясти
+   */
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this._element.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
   }
 
   /**

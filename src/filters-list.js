@@ -95,6 +95,19 @@ export default class FilterList extends Component {
   }
 
   /**
+   * Задание фильтра
+   * @param {*} filterName - имя фильтра
+   */
+  selectFilter(filterName) {
+    const selectedFilter = this._filters.find((filter) => filter.name === filterName);
+    if (selectedFilter) {
+      selectedFilter.isActive = true;
+      selectedFilter.update();
+      selectedFilter.dispatchChange();
+    }
+  }
+
+  /**
    * Создание фильтра
    * @param {Object} filterData - данные фильтра
    * @return {Object} - фильтр
