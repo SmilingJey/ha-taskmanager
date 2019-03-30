@@ -1,8 +1,11 @@
 import API from './api.js';
 import ModelTask from './model-task.js';
+import Store from './store.js';
+import Provider from './provider.js';
 
 const AUTHORIZATION = `Basic smilingjey5`;
 const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
+const TASKS_STORE_KEY = `tasks-store-key`;
 
 /**
  * Класс содержиет данные задач
@@ -12,6 +15,12 @@ export default class TasksData {
     this._tasks = null;
     this._onDataChange = null;
     this._api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+    this._store = new Store({key: TASKS_STORE_KEY, storage: localStorage});
+    this._provider = new Provider({
+      api: this._api,
+      store: this._store,
+      generateId: () => String(Date.now())
+    });
   }
 
   /**
@@ -35,14 +44,27 @@ export default class TasksData {
    * @param {Object} data - задача
    * @return {Promise} - промис
    */
-  addTask(data) {
+  createTask(data) {
     const rawData = ModelTask.toRAW(data);
     delete rawData.id;
-    return this._api.createTask({data: rawData})
+    return this._provider.createTask({data: rawData})
       .then((newData) => {
         this._tasks.push(newData);
         this._emitDataChange(`add`);
         return newData;
+      });
+  }
+
+  /**
+   * Получение списка задач с сервера
+   * @return {Promise} - промис
+   */
+  getTasksFromServer() {
+    return this._provider.getTasks()
+      .then((tasks) => {
+        this._tasks = tasks;
+        this._emitDataChange(`allupdate`);
+        return tasks;
       });
   }
 
@@ -52,7 +74,7 @@ export default class TasksData {
    * @return {Promise} - промис
    */
   updateTask(task) {
-    return this._api.updateTask({id: task.id, data: ModelTask.toRAW(task)})
+    return this._provider.updateTask({id: task.id, data: ModelTask.toRAW(task)})
       .then((updatedTaskData) => {
         this._tasks[this._getTaskIndexById(task.id)] = updatedTaskData;
         this._emitDataChange(`update`);
@@ -66,24 +88,15 @@ export default class TasksData {
    * @return {Promise} - промис
    */
   deleteTask({id}) {
-    return this._api.deleteTask({id})
+    return this._provider.deleteTask({id})
       .then(() => {
         this._tasks.splice(this._getTaskIndexById(id), 1);
         this._emitDataChange(`delete`);
       });
   }
 
-  /**
-   * Получение списка задач с сервера
-   * @return {Promise} - промис
-   */
-  getTasksFromServer() {
-    return this._api.getTasks()
-      .then((tasks) => {
-        this._tasks = tasks;
-        this._emitDataChange(`allupdate`);
-        return tasks;
-      });
+  syncTasks() {
+    this._provider.syncTasks();
   }
 
   /**

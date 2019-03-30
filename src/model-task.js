@@ -43,7 +43,7 @@ export default class ModelTask {
       title: data[`title`] || ``,
       color: data[`color`],
       tags: new Set(data[`tags`] || []),
-      dueDate: new Date(data[`due_date`]),
+      dueDate: data[`due_date`] ? new Date(data[`due_date`]) : ``,
       repeatingDays: data[`repeating_days`],
       picture: data[`picture`] || ``,
       isDone: Boolean(data[`is_done`]),
