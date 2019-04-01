@@ -5,7 +5,6 @@ import TasksData from './tasks-data.js';
 import Statistic from './statistic';
 import ModelTask from './model-task.js';
 
-
 const tasksData = new TasksData();
 const filtersList = new FilterList(tasksData.getTasks.bind(tasksData));
 const statistic = new Statistic(tasksData.getTasks.bind(tasksData));
