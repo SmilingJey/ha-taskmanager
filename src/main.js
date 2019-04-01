@@ -5,6 +5,7 @@ import TasksData from './tasks-data.js';
 import Statistic from './statistic';
 import ModelTask from './model-task.js';
 
+
 const tasksData = new TasksData();
 const filtersList = new FilterList(tasksData.getTasks.bind(tasksData));
 const statistic = new Statistic(tasksData.getTasks.bind(tasksData));
@@ -28,12 +29,13 @@ filtersList.onFilter = (filterFunction) => {
 // создание новой задачи
 function pushNewTask() {
   const newTaskData = ModelTask.createEmptyTask();
-  tasksData.addTask(newTaskData)
+  tasksData.createTask(newTaskData)
     .then((data) => {
       tasksBoard.addTask(data, true);
     })
-    .catch(() => {
+    .catch((e) => {
       tasksBoard.showErrorMessage();
+      throw e;
     });
 }
 
@@ -69,8 +71,20 @@ insertAfter(filtersList.render(), document.querySelector(`.main__search`));
 insertAfter(statistic.render(), document.querySelector(`.main__search`));
 document.querySelector(`main`).append(tasksBoard.render());
 
+// переключение между online и offline режимами работы
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  tasksData.syncTasks();
+});
+
+// загрузка данных
 tasksBoard.showLoadingMessage();
 tasksData.getTasksFromServer()
-  .catch(() => {
+  .catch((e) => {
     tasksBoard.showErrorMessage();
+    throw e;
   });
