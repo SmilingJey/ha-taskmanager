@@ -23,8 +23,9 @@ export default class Task extends Component {
    * Создание карточки задачи
    * @param {Object} data - описание задачи
    * @param {Boolean} isEdit - находится ли в режиме редактирования
+   * @param {String} onHashTagClick - событие при клике на хештег
    */
-  constructor(data, isEdit = false) {
+  constructor(data, isEdit = false, onHashTagClick = null) {
     super();
     this._number = Task.counter++;
 
@@ -58,6 +59,8 @@ export default class Task extends Component {
 
     this._flatpickrDate = null;
     this._flatpickrTime = null;
+
+    this._onHashTagClick = onHashTagClick;
   }
 
   /**
@@ -527,7 +530,7 @@ export default class Task extends Component {
    */
   _addHashtag(tag) {
     const tagsContainerElement = this._element.querySelector(`.card__hashtag-list`);
-    tagsContainerElement.prepend(new HashTag(tag).render());
+    tagsContainerElement.prepend(new HashTag(tag, this._onHashTagClick).render());
   }
 
   /**

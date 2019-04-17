@@ -13,6 +13,7 @@ export default class TasksBoard extends Component {
     this._getTasks = dataCallbacks.getTasks;
     this._deleteTask = dataCallbacks.deleteTask;
     this._updateTask = dataCallbacks.updateTask;
+    this._onHashTagClick = dataCallbacks.onHashTagClick;
 
     this._tasks = [];
   }
@@ -104,7 +105,7 @@ export default class TasksBoard extends Component {
    * @return {Object} объект точки путешествия
    */
   _createTask(taskData, isEdit = false) {
-    const task = new Task(taskData, isEdit);
+    const task = new Task(taskData, isEdit, this._onHashTagClick);
     task.onSubmit = (data) => {
       task.savingBlock();
       task.unsetUnsaved();
@@ -153,8 +154,7 @@ export default class TasksBoard extends Component {
     if (hasTasks) {
       noTaskMessageElement.classList.add(`visually-hidden`);
     } else {
-      this._showMessage(`Congratulations, all tasks were completed! To create a new click on
-      «add new task» button.`);
+      this._showMessage(`No tasks found`);
     }
   }
 

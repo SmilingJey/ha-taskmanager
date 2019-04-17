@@ -4,18 +4,21 @@ import Component from './component.js';
  * Класс представляет хэштег карточки задачи
  */
 export default class HashTag extends Component {
-  constructor(text) {
+  constructor(text, onHashTagClick) {
     super();
     this._text = text;
     this._onClick = this._onClick.bind(this);
     this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
+    this._onHashTagClick = onHashTagClick;
   }
 
   /**
    * Обработчик события клика по хештегу
    */
   _onClick() {
-
+    if (typeof this._onHashTagClick === `function`) {
+      this._onHashTagClick(this._text);
+    }
   }
 
   /**

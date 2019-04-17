@@ -4,6 +4,7 @@ import {insertAfter} from './utils.js';
 import TasksData from './tasks-data.js';
 import Statistic from './statistic';
 import ModelTask from './model-task.js';
+import * as moment from 'moment';
 
 const tasksData = new TasksData();
 const filtersList = new FilterList(tasksData.getTasks.bind(tasksData));
@@ -12,6 +13,15 @@ const tasksBoard = new TasksBoard({
   getTasks: tasksData.getTasks.bind(tasksData),
   deleteTask: tasksData.deleteTask.bind(tasksData),
   updateTask: tasksData.updateTask.bind(tasksData),
+  onHashTagClick: (text) => {
+    const searchInputElement = document.querySelector(`.search__input`);
+    const controlSearch = document.querySelector(`#control__search`);
+    controlSearch.checked = true;
+
+    searchInputElement.value = text;
+    showPage(`control__search`);
+    setTaskBoardSerch();
+  }
 });
 
 tasksData.onDataChange = (eventName) => {
@@ -49,13 +59,20 @@ newTaskElement.addEventListener(`click`, (evt) => {
 
 // переключение между странацами
 function showPage(pageName) {
-  tasksBoard.setVisible(pageName === `control__task`);
+  tasksBoard.setVisible(pageName === `control__task` || pageName === `control__search`);
   filtersList.setVisible(pageName === `control__task`);
   document.querySelector(`#control__task`).checked = pageName === `control__task`;
   statistic.setVisible(pageName === `control__statistic`);
   document.querySelector(`#control__statistic`).checked = pageName === `control__statistic`;
   if (pageName === `control__statistic`) {
     statistic.updateCharts();
+  }
+
+  const searchInputElement = document.querySelector(`.search__input`);
+  if (pageName === `control__search`) {
+    searchInputElement.classList.remove(`search__input--hidden`);
+  } else {
+    searchInputElement.classList.add(`search__input--hidden`);
   }
 }
 
@@ -78,6 +95,35 @@ window.addEventListener(`offline`, () => {
 window.addEventListener(`online`, () => {
   document.title = document.title.split(`[OFFLINE]`)[0];
   tasksData.syncTasks();
+});
+
+// поиск
+const searchInputElement = document.querySelector(`.search__input`);
+
+function setTaskBoardSerch() {
+  const searchText = searchInputElement.value;
+  tasksBoard.filterFunction = (task) => {
+    if (searchText.charAt(0) === `#`) {
+      return Array.from(task.tags).join(` #`).toLowerCase().includes(searchText.toLowerCase());
+    }
+    if (searchText.charAt(0) === `D`) {
+      return moment(task.dueDate).format(`DD.MM.YYYY`).toLowerCase().includes(searchText.toLowerCase());
+    }
+    if (task.title.toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    if (Array.from(task.tags).join(` `).toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    if (moment(task.dueDate).format(`DD.MM.YYYY`).toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    return false;
+  };
+}
+
+searchInputElement.addEventListener(`keydown`, () => {
+  setTaskBoardSerch();
 });
 
 // загрузка данных
