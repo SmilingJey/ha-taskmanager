@@ -1,13 +1,13 @@
 import Component from "./component";
 import Filter from "./filter";
 import * as moment from 'moment';
+import {removeChilds} from './utils';
 
 const filtersData = [
   {
     id: `all`,
     name: `ALL`,
     filterFunction: () => true,
-    isActive: true,
   },
   {
     id: `overdue`,
@@ -37,7 +37,7 @@ const filtersData = [
   {
     id: `archive`,
     name: `ARCHIVE`,
-    filterFunction: (data) => data.isArchive,
+    filterFunction: (data) => data.isDone,
   }
 ];
 
@@ -50,6 +50,7 @@ export default class FilterList extends Component {
     this._filters = [];
     this._onFilter = null;
     this._getDataCallback = getDataCallback;
+    this._activeFilterId = `all`;
   }
 
   /**
@@ -66,6 +67,12 @@ export default class FilterList extends Component {
   get template() {
     const elem = document.createElement(`section`);
     elem.classList.add(`main__filter`, `filter`, `container`);
+    this._filters = filtersData.map(this._createFilter.bind(this));
+    const filtersFragment = document.createDocumentFragment();
+    for (const filter of this._filters) {
+      filtersFragment.appendChild(filter.render());
+    }
+    elem.appendChild(filtersFragment);
     return elem;
   }
 
@@ -74,15 +81,9 @@ export default class FilterList extends Component {
    */
   update() {
     for (const filter of this._filters) {
-      filter.unrender();
+      filter.active = (this._activeFilterId === filter.id);
+      filter.update();
     }
-
-    this._filters = filtersData.map(this._createFilter.bind(this));
-    const filtersFragment = document.createDocumentFragment();
-    for (const filter of this._filters) {
-      filtersFragment.appendChild(filter.render());
-    }
-    this._element.appendChild(filtersFragment);
   }
 
   /**
@@ -114,7 +115,9 @@ export default class FilterList extends Component {
    */
   _createFilter(filterData) {
     const filter = new Filter(filterData, this._getDataCallback);
-    filter.onFilter = (filterFunction) => {
+    filter.onFilter = (id, filterFunction) => {
+      this._activeFilterId = id;
+      this.update();
       if (typeof this._onFilter === `function`) {
         this._onFilter(filterFunction);
       }

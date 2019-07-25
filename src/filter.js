@@ -30,11 +30,15 @@ export default class Filter extends Component {
     return this._name;
   }
 
+  get id() {
+    return this._id;
+  }
+
   /**
    * Задает активен ли фильтр
    * @param {Boolean} active
    */
-  set isActive(active) {
+  set active(active) {
     this._isActive = active;
   }
 
@@ -75,16 +79,13 @@ export default class Filter extends Component {
     this._element.querySelector(`input`).removeEventListener(`change`, this._onChange);
   }
 
-  /**
-   * Обработчик события выбор фильтра
-   */
   _onChange() {
     this.dispatchChange();
   }
 
   dispatchChange() {
     if (typeof this._onFilter === `function`) {
-      this._onFilter(this._filterFunction);
+      this._onFilter(this._id, this._filterFunction);
     }
   }
 }

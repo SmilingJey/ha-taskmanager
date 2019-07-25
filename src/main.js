@@ -64,13 +64,17 @@ function showPage(pageName) {
   document.querySelector(`#control__task`).checked = pageName === `control__task`;
   statistic.setVisible(pageName === `control__statistic`);
   document.querySelector(`#control__statistic`).checked = pageName === `control__statistic`;
+  if (pageName === `control__task`) {
+    tasksBoard.filterFunction = null;
+  }
+
   if (pageName === `control__statistic`) {
     statistic.updateCharts();
   }
-
   const searchInputElement = document.querySelector(`.search__input`);
   if (pageName === `control__search`) {
     searchInputElement.classList.remove(`search__input--hidden`);
+    setTaskBoardSerch();
   } else {
     searchInputElement.classList.add(`search__input--hidden`);
   }

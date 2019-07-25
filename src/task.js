@@ -29,6 +29,8 @@ export default class Task extends Component {
     super();
     this._number = Task.counter++;
 
+    this._data = data;
+
     this._id = data.id;
     this._title = data.title;
     this._color = data.color;
@@ -41,6 +43,8 @@ export default class Task extends Component {
 
     this._onSubmit = null;
     this._onDelete = null;
+    this._onFavorite = null;
+    this._onArchive = null;
     this._onEditEvent = this._onEditEvent.bind(this);
     this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onESCkeydown = this._onESCkeydown.bind(this);
@@ -49,6 +53,9 @@ export default class Task extends Component {
     this._onChangeIsRepeated = this._onChangeIsRepeated.bind(this);
     this._onChangeHasDueDate = this._onChangeHasDueDate.bind(this);
     this._onHashtagInputKeydown = this._onHashtagInputKeydown.bind(this);
+    this._onFavoriteButtonClick = this._onFavoriteButtonClick.bind(this);
+    this._onArchiveButtonClick = this._onArchiveButtonClick.bind(this);
+
 
     this._isEdit = isEdit;
 
@@ -202,6 +209,22 @@ export default class Task extends Component {
   }
 
   /**
+   * Задание обработчика события добавления в избранное
+   * @param {Function} fn
+   */
+  set onFavorite(fn) {
+    this._onFavorite = fn;
+  }
+
+  /**
+   * Задание обработчика события добавления в архив
+   * @param {Function} fn
+   */
+  set onArchive(fn) {
+    this._onArchive = fn;
+  }
+
+  /**
    * Обработчик отправки формы при сохранении задачи
    * @param {Event} evt - событие
    */
@@ -301,6 +324,22 @@ export default class Task extends Component {
     };
   }
 
+  _onFavoriteButtonClick(evt) {
+    evt.preventDefault();
+    if (typeof this._onFavorite === `function`) {
+      const data = {... this._data, isFavorite: !this._data.isFavorite};
+      this._onFavorite(data);
+    }
+  }
+
+  _onArchiveButtonClick(evt) {
+    evt.preventDefault();
+    if (typeof this._onArchive === `function`) {
+      const data = {... this._data, isDone: !this._data.isDone}
+      this._onArchive(data);
+    }
+  }
+
   /**
    * Установка обработчиков событий
    */
@@ -314,6 +353,8 @@ export default class Task extends Component {
     this._element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, this._onChangeIsRepeated);
     this._element.querySelector(`.card__hashtag-input`).addEventListener(`keydown`, this._onHashtagInputKeydown);
+    this._element.querySelector(`.card__btn--archive`).addEventListener(`click`, this._onArchiveButtonClick);
+    this._element.querySelector(`.card__btn--favorites`).addEventListener(`click`, this._onFavoriteButtonClick);
   }
 
   /**
@@ -329,6 +370,8 @@ export default class Task extends Component {
     this._element.querySelector(`.card__date-deadline-toggle`).removeEventListener(`click`, this._onChangeHasDueDate);
     this._element.querySelector(`.card__repeat-toggle`).removeEventListener(`click`, this._onChangeIsRepeated);
     this._element.querySelector(`.card__hashtag-input`).removeEventListener(`keydown`, this._onHashtagInputKeydown);
+    this._element.querySelector(`.card__btn--archive`).removeEventListener(`click`, this._onFavoriteButtonClick);
+    this._element.querySelector(`.card__btn--favorites`).removeEventListener(`click`, this._onArchiveButtonClick);
   }
 
   /**
@@ -548,7 +591,7 @@ export default class Task extends Component {
 
   _updateIsArchive() {
     const buttonElement = this._element.querySelector(`.card__btn--archive`);
-    if (!this._isArchive) {
+    if (!this._isDone) {
       buttonElement.classList.remove(`card__btn--disabled`);
     } else {
       buttonElement.classList.add(`card__btn--disabled`);

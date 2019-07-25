@@ -142,6 +142,34 @@ export default class TasksBoard extends Component {
         });
     };
 
+    task.onFavorite = (data) => {
+      this._updateTask(data)
+      .then((updatedTaskData) => {
+        const updatedTask = this._createTask(updatedTaskData);
+        task.element.parentElement.replaceChild(updatedTask.render(), task.element);
+        task.unrender();
+        this._tasks[this._tasks.indexOf(task)] = updatedTask;
+        this._updateNoTaskMessage(this._getTasks().length > 0);
+      })
+      .catch(() => {
+        this.showErrorMessage();
+      });
+    };
+
+    task.onArchive = (data) => {
+      this._updateTask(data)
+      .then((updatedTaskData) => {
+        const updatedTask = this._createTask(updatedTaskData);
+        task.element.parentElement.replaceChild(updatedTask.render(), task.element);
+        task.unrender();
+        this._tasks[this._tasks.indexOf(task)] = updatedTask;
+        this._updateNoTaskMessage(this._getTasks().length > 0);
+      })
+      .catch(() => {
+        this.showErrorMessage();
+      });
+    };
+
     return task;
   }
 
