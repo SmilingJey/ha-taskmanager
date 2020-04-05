@@ -2,12 +2,13 @@
   "name": "TaskManager",
   "version": "1.0.0",
   "private": true,
-  "description": "Личный проект «Менеджер задач» от HTML Academy",
+  "description": "Менеджер задач",
   "scripts": {
     "eslint": "eslint src/**/*.js",
     "test": "npm run eslint",
-    "build": "webpack",
-    "start": "webpack-dev-server --open"
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --open",
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
     "eslint": "5.13.0",

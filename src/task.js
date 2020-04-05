@@ -523,7 +523,7 @@ export default class Task extends Component {
     if (this._picture) {
       imgConteinerElement.classList.remove(`card__img-wrap--empty`);
       const imgElement = imgConteinerElement.querySelector(`.card__img`);
-      imgElement.src = this._picture;
+      imgElement.src = `https://${this._picture}`;
     } else {
       imgConteinerElement.classList.add(`card__img-wrap--empty`);
     }
